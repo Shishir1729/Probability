@@ -1,9 +1,3 @@
-# Now make a class for discrete probability distributions
-
-#First we need to have 2 ways of giving the distribution
-#2. Give a list of values and a list of probabilities
-#3. Give a list of values and a function that gives the probability of each value
-
 class Probability:
     def __init__(self, list_of_values, list_of_probabilities = None, function = None):
         if len(list_of_values) == 0:
