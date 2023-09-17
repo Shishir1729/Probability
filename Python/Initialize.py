@@ -69,22 +69,6 @@ class Probability:
                 return False
         return True
     
-    def conditioning(self, subset = None, Invariant = None):
-        if subset == None and Invariant == None:
-            raise ValueError("You must give either a subset or an invariant")
-        if subset != None and Invariant != None:
-            raise ValueError("You must give either a subset or an invariant, not both")
-        if subset != None:
-            if self.check_subset(subset):
-                return Probability(subset, [self.function(i)/self.Event(subset) for i in subset])
-            else:
-                raise ValueError("The subset must be a subset of the values")
-        if Invariant != None:
-            if self.check_invariant(Invariant):
-                return Probability(subset, [self.function(i)/self.Event(Invariant = Invariant) for i in subset])
-            else:
-                raise ValueError("The invariant must be a function that takes a value and returns a boolean")
-    
         
 class Event(Probability):
     def __init__(self, Probabilty_space, subset = None, Invariant = None):
