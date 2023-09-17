@@ -101,7 +101,62 @@ class Probability:
                 return Probability(subset, [self.function(i)/self.Event(Invariant = Invariant) for i in subset])
             else:
                 raise ValueError("The invariant must be a function that takes a value and returns a boolean")
-
-
+    
+        
+class Event(Probability):
+    def __init__(self, Probabilty_space, subset = None, Invariant = None):
+        if not type(Probabilty_space) == Probability:
+            raise ValueError("Probabilty_space must be an instance of the Probability class")
+        if subset == None and Invariant == None:
+            raise ValueError("You must give either a subset or an invariant")
+        if subset != None and Invariant != None:
+            raise ValueError("You must give either a subset or an invariant, not both")
+        if subset != None:
+            if Probabilty_space.check_subset(subset):
+                self.space = Probabilty_space
+                self.values = subset
+                self.probabilities = [Probabilty_space.probabilities[Probabilty_space.values.index(i)] for i in subset]
+                self.function = lambda x: Probabilty_space.probabilities[Probabilty_space.values.index(x)]
+            else:
+                raise ValueError("The subset must be a subset of the values")
+        if Invariant != None:
+            if Probabilty_space.check_invariant(Invariant):
+                self.space = Probabilty_space
+                self.values = [i for i in Probabilty_space.values if Invariant(i)]
+                self.probabilities = [Probabilty_space.probabilities[Probabilty_space.values.index(i)] for i in self.values]
+                self.function = lambda x: Probabilty_space.probabilities[Probabilty_space.values.index(x)]
+            else:
+                raise ValueError("The invariant must be a function that takes a value and returns a boolean")
+            
+    def probability(self):
+        return sum(self.probabilities)
+    
+    def conditioning(self):
+        return Probability(self.values, [self.function(i)/self.probability() for i in self.values])
+    
+    def complement(self):
+        return Event(self.space, [i for i in self.space.values if i not in self.values])
+    
+    def union(self, other):
+        if not type(other) == Event:
+            raise ValueError("The other event must be an instance of the Event class")
+        if self.space != other.space:
+            raise ValueError("The two events must be in the same probability space")
+        return Event(self.space, [i for i in self.values] + [i for i in other.values if i not in self.values])
+    
+    def intersection(self, other):
+        if not type(other) == Event:
+            raise ValueError("The other event must be an instance of the Event class")
+        if self.space != other.space:
+            raise ValueError("The two events must be in the same probability space")
+        return Event(self.space, [i for i in self.values if i in other.values])
+    
+    def independent(self, other):
+        if not type(other) == Event:
+            raise ValueError("The other event must be an instance of the Event class")
+        if self.space != other.space:
+            raise ValueError("The two events must be in the same probability space")
+        return abs(self.probability() * other.probability() - self.intersection(other).probability()) < 1e-6
+    
 
             
