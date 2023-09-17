@@ -1,2 +1,2 @@
 # Probability
-Make a repo for all things Probability
+A repository for all things Probability
