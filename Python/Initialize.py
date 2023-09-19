@@ -129,7 +129,6 @@ class Event(Probability):
             raise ValueError("The two events must be in the same probability space")
         return abs(self.probability() * other.probability() - self.intersection(other).probability()) < 1e-6
     
-
 class Random_Variable(Probability):
 
     def __init__(self, Probability_space, function):
