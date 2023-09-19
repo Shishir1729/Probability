@@ -1,2 +1,5 @@
 Set Operations on Events
 Checking Independence for more than one Event
+Random Variables and Probability Distributions with more than one Variables
+Joint Probability Distributions
+Need to test Independence of Random Variables

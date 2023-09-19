@@ -65,10 +65,14 @@ class Probability:
     
     def check_invariant(self, Invariant):
         for x in self.values:
-            if not Invariant(x):
+            if Invariant(x) not in [True, False]:
                 return False
         return True
     
+    def check_function(self, function):
+        #TODO
+        pass
+        return True
         
 class Event(Probability):
     def __init__(self, Probabilty_space, subset = None, Invariant = None):
@@ -126,4 +130,54 @@ class Event(Probability):
         return abs(self.probability() * other.probability() - self.intersection(other).probability()) < 1e-6
     
 
-            
+class Random_Variable(Probability):
+
+    def __init__(self, Probability_space, function):
+        if not type(Probability_space) == Probability:
+            raise ValueError("Probabilty_space must be an instance of the Probability class")
+        if not Probability_space.check_function(function):
+            raise ValueError("The function must be a function that takes a value and returns a value")
+        self.space = Probability_space
+        self.values = list(set([function(i) for  i in Probability_space.values]))
+        self.probabilities = [sum([Probability_space.probabilities[Probability_space.values.index(i)] for i in Probability_space.values if function(i) == j]) for j in self.values]
+        self.transform = function   #Find a better name for this
+        self.function = lambda x: sum([Probability_space.probabilities[Probability_space.values.index(i)] for i in Probability_space.values if function(i) == x])
+
+    def check_v(self):
+        for x in self.values:
+            if type(x) != int and type(x) != float and type(x) != complex:
+                return False
+        return True
+
+    def expectation(self, function = lambda x: x):
+        if not self.check_v():
+            return ValueError("The Random Variable domain should be reals to calculate the expectation")
+        return sum([function(i) * self.function(i) for i in self.values])
+    
+    def variance(self):
+        if not self.check_v():
+            return ValueError("The Random Variable domain should be reals to calculate the Variance")
+        return self.expectation(lambda x: x**2) - self.expectation()**2
+    
+    def standard_deviation(self):
+        if not self.check_v():
+            return ValueError("The Random Variable domain should be reals to calculate the standard deviation")
+        return self.variance()**0.5
+    
+    def independent(self, other):
+        if not type(other) == Random_Variable:
+            raise ValueError("The other random variable must be an instance of the Random_Variable class")
+        if self.space != other.space:
+            raise ValueError("The two random variables must be in the same probability space")
+        intersect = Random_Variable(self.space, lambda x: (self.transform(x), other.transform(x)))
+        for i in intersect.values:
+            if not self.function(i[0]) * other.function(i[1]) == intersect.function(i):
+                return False
+        return True
+    
+
+
+
+
+
+
