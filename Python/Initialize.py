@@ -139,9 +139,11 @@ class Random_Variable(Probability):
             raise ValueError("The function must be a function that takes a value and returns a value")
         self.space = Probability_space
         self.values = list(set([function(i) for  i in Probability_space.values]))
+        self.values.sort()
         self.probabilities = [sum([Probability_space.probabilities[Probability_space.values.index(i)] for i in Probability_space.values if function(i) == j]) for j in self.values]
         self.transform = function   #Find a better name for this
-        self.function = lambda x: sum([Probability_space.probabilities[Probability_space.values.index(i)] for i in Probability_space.values if function(i) == x])
+        self.pdf = [sum([Probability_space.probabilities[Probability_space.values.index(i)] for i in Probability_space.values if function(i) == x]) for x in self.values]
+        self.cdf = lambda x: sum([Probability_space.probabilities[Probability_space.values.index(i)] for i in Probability_space.values if function(i) <= x])    
 
     def check_v(self):
         for x in self.values:
@@ -152,7 +154,7 @@ class Random_Variable(Probability):
     def expectation(self, function = lambda x: x):
         if not self.check_v():
             return ValueError("The Random Variable domain should be reals to calculate the expectation")
-        return sum([function(i) * self.function(i) for i in self.values])
+        return sum([function(i) * self.pdf[i] for i in range(len(self.values))])
     
     def variance(self):
         if not self.check_v():
@@ -171,12 +173,10 @@ class Random_Variable(Probability):
             raise ValueError("The two random variables must be in the same probability space")
         intersect = Random_Variable(self.space, lambda x: (self.transform(x), other.transform(x)))
         for i in intersect.values:
-            if not self.function(i[0]) * other.function(i[1]) == intersect.function(i):
+            if not self.pdf[self.values.index(i[0])] * other.pdf(other.values.index(i[1])) == intersect.pdf(intersect.values.index(i)):
                 return False
         return True
     
-
-
 
 
 
