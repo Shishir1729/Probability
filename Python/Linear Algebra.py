@@ -7,7 +7,8 @@
             7) Functions on Matrices
             8) Special techniques for matrices in probability and Sparse Matrices?
             9) Partial Pivoting and Scaled Partial Pivoting
-            10) Inverse of a matrix """
+            10) Inverse of a matrix
+            11) Methods for tridiagonal and banded matrices """
 
 #Need to figure if I really need to make a vector space or are just JEE stuff fine.
 class Vector:
