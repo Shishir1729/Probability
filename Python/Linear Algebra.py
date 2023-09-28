@@ -78,6 +78,9 @@ class Matrix:
             for j in range(self.columns):
                 print(self.matrix[i][j], end = " ")
             print()
+    
+    def copy(self):
+        return Matrix([[self.matrix[i][j] for j in range(self.columns)] for i in range(self.rows)])
             
     
     #Implement Partial Pivoting and Scaled Partial Pivoting later
